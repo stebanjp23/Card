@@ -1,0 +1,198 @@
+<!--
+Proyecto: mensaje-amiga
+Archivo: index.html
+Descripción: Página estática (HTML/CSS/JS) que permite escribir un mensaje emotivo, generar un enlace compartible con el mensaje en el parámetro `?msg=...` y mostrar el mensaje al abrir el enlace.
+
+Instrucciones para subir a GitHub Pages:
+1. Crea un nuevo repositorio en GitHub (público o privado). Ej: "mensaje-amiga".
+2. Clona el repo localmente y coloca este archivo `index.html` en la raíz.
+3. Haz commit y push: git add index.html; git commit -m "Add index"; git push
+4. Ve a Settings > Pages (o Settings > Code and automation > Pages) y selecciona la rama `main` (o `master`) y / (root) como carpeta. Guarda.
+5. GitHub Pages generará una URL del tipo: https://TU_USUARIO.github.io/NOMBRE_REPO/ — abre esa URL y tu página estará activa.
+
+Notas:
+- La generación de enlace codifica el mensaje en la URL (`?msg=`) usando `encodeURIComponent`. Evita mensajes inmensamente largos (la mayoría de navegadores soportan URLs muy largas, pero hay límites).
+- Si prefieres archivos separados (styles.css, script.js), puedo generarlos en otra versión.
+
+-->
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mensaje para mi mejor amiga</title>
+  <style>
+    :root{--bg:#fff5f8;--card:#ffffff;--accent:#ff7ab6;--muted:#6b6b6b}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:linear-gradient(180deg, #fff5f8 0%, #fff 60%); margin:0; color:#222}
+    .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px}
+    .card{width:100%; max-width:900px; background:var(--card); border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,0.08); padding:28px; display:grid; grid-template-columns:1fr 380px; gap:24px}
+    @media(max-width:880px){.card{grid-template-columns:1fr; padding:20px}}
+
+    .title{display:flex; align-items:center; gap:14px}
+    .logo{width:64px;height:64px;border-radius:12px; background:linear-gradient(135deg,#ffb3d9,#ffd9f0); display:flex; align-items:center; justify-content:center; font-weight:700; color:#7a003e}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:6px 0 18px;color:var(--muted)}
+
+    textarea{width:100%; min-height:320px; resize:vertical; padding:16px; border-radius:12px; border:1px solid #eee; font-size:15px; line-height:1.5}
+    .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer}
+    button.ghost{background:transparent; color:var(--accent); border:1px solid rgba(255,122,182,0.2)}
+    .shareBox{background:linear-gradient(180deg,#fff,#fff); border-radius:12px; padding:16px; box-shadow:inset 0 1px 0 rgba(255,255,255,0.6); border:1px solid #f0e9ee}
+    .preview{white-space:pre-wrap; font-size:15px; line-height:1.6}
+    .label{font-size:13px; color:var(--muted); margin-bottom:8px}
+
+    .hint{font-size:13px; color:var(--muted); margin-top:8px}
+    .copied{font-size:13px; color:green}
+    footer{grid-column:1/-1; text-align:center; color:var(--muted); margin-top:8px; font-size:13px}
+
+    /* subtle decorations */
+    .decor{position:absolute; pointer-events:none; opacity:0.08}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div>
+        <div class="title">
+          <div class="logo">AM</div>
+          <div>
+            <h1>Escribe tu mensaje para ella</h1>
+            <p class="lead">Escribe un mensaje emotivo y genera un enlace para compartirlo. La página mostrará el mensaje cuando alguien abra ese enlace.</p>
+          </div>
+        </div>
+
+        <label class="label" for="msg">Tu mensaje</label>
+        <textarea id="msg" placeholder="Escribe aquí tu mensaje...">Revisando fotos y videos fui consciente, por primera vez, de la cantidad de sucesos y momentos que hemos vivido, y de lo mucho que hemos crecido como personas.
+Hoy escribo este mensaje para agradecerle a la vida que hoy, 16/11, cumples un año más. Me alegra y me enorgullece lo mucho que has crecido, lo mucho que has madurado a lo largo de nuestra amistad y que nunca hayas olvidado tu esencia.
+
+Porque, como tú muchas veces dijiste desde que nos conocimos, “los mejores perfumes vienen en frascos pequeños”. Y tienes tanta razón… Nunca pensé vivir tantas experiencias que, para mí, parecían un simple sueño, y que contigo se vuelven posibles.
+
+Nunca voy a olvidar esos primeros juegos de básquet en la UDT; esas primeras veces juntos en Tarragona mirando ropa; las veces que comprábamos unas papas y una Monster y, en Monjas, nos sentábamos a hablar del día.
+
+Todos estos y muchos más momentos han hecho que, hoy en día, seas la persona que eres: responsable, con tu propio coche, con planes a futuro…
+
+Hay que vivir el hoy, porque el mañana aún está muy lejos.
+Gracias por ser el ser más leal y por demostrarme que tener una buena amistad no significa comunicarnos todo el día o estar juntos siempre.
+
+Te quiero mucho. Que tengas un gran día y que la vida te llene de grandes bendiciones.</textarea>
+
+        <div class="controls">
+          <button id="generate">Generar enlace</button>
+          <button id="copyBtn" class="ghost">Copiar enlace</button>
+          <button id="openBtn" class="ghost">Abrir en nueva pestaña</button>
+          <button id="download" class="ghost">Descargar HTML</button>
+        </div>
+
+        <p class="hint">Sugerencia: si vas a subir esto a GitHub Pages, pega la URL base y se añadirá <code>?msg=TU_MENSAJE</code>. Ej: <em>https://TU_USUARIO.github.io/NOMBRE_REPO/?msg=...</em></p>
+
+      </div>
+
+      <aside>
+        <div class="shareBox">
+          <div class="label">Vista previa (cómo lo verá ella)</div>
+          <div id="preview" class="preview"></div>
+          <div style="height:12px"></div>
+          <div class="label">Enlace generado</div>
+          <input id="link" style="width:100%; padding:8px; border-radius:8px; border:1px solid #eee;" readonly />
+          <div id="copied" class="copied" style="display:none">¡Enlace copiado al portapapeles!</div>
+        </div>
+      </aside>
+
+      <footer>Listo para subir a GitHub Pages • Generado con cariño</footer>
+    </div>
+  </div>
+
+  <script>
+    // Elementos
+    const textarea = document.getElementById('msg');
+    const preview = document.getElementById('preview');
+    const generate = document.getElementById('generate');
+    const linkInput = document.getElementById('link');
+    const copyBtn = document.getElementById('copyBtn');
+    const openBtn = document.getElementById('openBtn');
+    const downloadBtn = document.getElementById('download');
+
+    function updatePreview(text){
+      preview.textContent = text || 'Aquí aparecerá el mensaje.';
+    }
+
+    // Al cargar, si hay msg en URL mostrarlo
+    function getParam(){
+      try{
+        const params = new URLSearchParams(window.location.search);
+        return params.get('msg');
+      }catch(e){return null}
+    }
+
+    const incoming = getParam();
+    if(incoming){
+      const decoded = decodeURIComponent(incoming);
+      // mostrar con formato
+      updatePreview(decoded);
+      // ocultar área de edición para que quede como 'vista' cuando se abra con msg
+      if(window.location.search){
+        // mejorar la experiencia si viene desde un enlace compartido
+        document.querySelector('textarea').style.display = 'none';
+        document.querySelector('.controls').style.display = 'none';
+      }
+    } else {
+      updatePreview(textarea.value);
+    }
+
+    textarea.addEventListener('input', ()=> updatePreview(textarea.value));
+
+    generate.addEventListener('click', ()=>{
+      const base = window.location.origin + window.location.pathname;
+      const msg = textarea.value || '';
+      const url = base + '?msg=' + encodeURIComponent(msg);
+      linkInput.value = url;
+      copyToClipboard(url);
+      showCopied();
+    });
+
+    copyBtn.addEventListener('click', ()=>{
+      if(linkInput.value) copyToClipboard(linkInput.value);
+      else {
+        // generar si no existe
+        generate.click();
+      }
+      showCopied();
+    });
+
+    openBtn.addEventListener('click', ()=>{
+      if(!linkInput.value) generate.click();
+      window.open(linkInput.value || '#', '_blank');
+    });
+
+    function copyToClipboard(text){
+      navigator.clipboard?.writeText(text).catch(()=>{
+        // fallback
+        linkInput.select();
+        document.execCommand('copy');
+      });
+    }
+
+    function showCopied(){
+      const el = document.getElementById('copied');
+      el.style.display = 'block';
+      setTimeout(()=> el.style.display = 'none', 2200);
+    }
+
+    // Download the current page as an HTML file (useful para enviar el archivo)
+    downloadBtn.addEventListener('click', ()=>{
+      const html = '<!doctype html>' + document.documentElement.innerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'mensaje-amiga.html';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Si no hay param msg, mostrar la preview inicial del textarea
+    if(!incoming){ updatePreview(textarea.value); }
+  </script>
+</body>
+</html>
