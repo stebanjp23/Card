@@ -16,6 +16,7 @@
       color: #333;
       padding: 20px;
       text-align: center;
+      overflow: hidden; /* para que los emojis no generen scroll */
     }
     .message {
       background: #fff;
@@ -25,18 +26,59 @@
       max-width: 700px;
       line-height: 1.6;
       font-size: 18px;
+      white-space: pre-wrap;
+      position: relative;
+      z-index: 10;
+    }
+    .emoji {
+      position: absolute;
+      font-size: 24px;
+      pointer-events: none;
+      animation-name: fall;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(-50px); opacity: 0; }
+      10% { opacity: 1; }
+      100% { transform: translateY(110vh); opacity: 0; }
     }
   </style>
 </head>
 <body>
-  <div class="message" id="message">
-    Cargando mensaje...
+  <div class="message">
+Revisando fotos y videos fui consciente, por primera vez, de la cantidad de sucesos y momentos que hemos vivido, y de lo mucho que hemos crecido como personas.
+Hoy escribo este mensaje para agradecerle a la vida que hoy, 16/11, cumples un año más. Me alegra y me enorgullece lo mucho que has crecido, lo mucho que has madurado a lo largo de nuestra amistad y que nunca hayas olvidado tu esencia.
+
+Porque, como tú muchas veces dijiste desde que nos conocimos, “los mejores perfumes vienen en frascos pequeños”. Y tienes tanta razón… Nunca pensé vivir tantas experiencias que, para mí, parecían un simple sueño, y que contigo se vuelven posibles.
+
+Nunca voy a olvidar esos primeros juegos de básquet en la UDT; esas primeras veces juntos en Tarragona mirando ropa; las veces que comprábamos unas papas y una Monster y, en Monjas, nos sentábamos a hablar del día.
+Nuestras primeras discusiones, nuestras reconciliaciones, tu época emo, tu época más social; esos veranos llenos de bailes, bebidas, reflexiones, risas y decepciones.
+
+Todos estos y muchos más momentos han hecho que, hoy en día, seas la persona que eres: responsable, con tu propio coche, con planes a futuro… cosas que, si te hubieran preguntado hace 3 años, no tenías ni idea, y que en tu inocencia decías…
+
+Hay que vivir el hoy, porque el mañana aún está muy lejos.
+Gracias por ser el ser más leal y por demostrarme que tener una buena amistad no significa comunicarnos todo el día o estar juntos siempre.
+Gracias por los buenos momentos; sé que todo lo que te has propuesto lo vas a lograr, y sabes que siempre voy a estar apoyándote sin juzgar.
+Porque, aunque suene a algo que dirían los padres, en el fondo, tu felicidad es mi felicidad.
+
+Te quiero mucho. Que tengas un gran día y que la vida te llene de grandes bendiciones.
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const msg = params.get('msg') || "No hay mensaje.";
-    document.getElementById('message').textContent = decodeURIComponent(msg);
+    const emojis = ['💖','💖','💖','💖','💖','💖','💖','💖','💖','💖'];
+    const body = document.body;
+
+    emojis.forEach((emojiChar) => {
+      const emoji = document.createElement('div');
+      emoji.classList.add('emoji');
+      emoji.textContent = emojiChar;
+      emoji.style.left = Math.random() * 100 + 'vw';
+      emoji.style.fontSize = (12 + Math.random()*24) + 'px';
+      emoji.style.animationDuration = (4 + Math.random()*4) + 's';
+      emoji.style.animationDelay = Math.random()*5 + 's';
+      body.appendChild(emoji);
+    });
   </script>
 </body>
 </html>
